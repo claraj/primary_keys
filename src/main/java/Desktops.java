@@ -45,8 +45,8 @@ public class Desktops {
              Statement createTableStatement = connection.createStatement()) {
             
             //The SQL to create the Desktop table is
-            // CREATE TABLE Desktops (id VARCHAR(36) NOT NULL, manufacturer VARCHAR(100), model VARCHAR(100) PRIMARY KEY(id) )
-            String createTableSQLtemplate = "CREATE TABLE %s (%s VARCHAR NOT NULL AUTO_INCREMENT, %s VARCHAR(100), %s VARCHAR(100) PRIMARY KEY(%s) )";
+            // CREATE TABLE IF NOT EXISTS Desktops (id VARCHAR(36) NOT NULL, manufacturer VARCHAR(100), model VARCHAR(100), PRIMARY KEY (id) )
+            String createTableSQLtemplate = "CREATE TABLE IF NOT EXISTS %s (%s VARCHAR(36) NOT NULL, %s VARCHAR(100), %s VARCHAR(100), PRIMARY KEY(%s) )";
             String createTableSQL = String.format(createTableSQLtemplate, DESKTOP_TABLE_NAME, ID_COL, MANUFACTURER_COL, MODEL_COL, ID_COL);
             System.out.println("The SQL to be executed is: " + createTableSQL);
 

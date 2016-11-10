@@ -65,15 +65,15 @@ public class Cellphones {
         try (BufferedReader reader = new BufferedReader(new FileReader(PRIMARY_KEY_FILE_NAME))) {
             String key = reader.readLine();
             primaryKeyCounter = Integer.parseInt(key);
-        } catch (IOException ioe) {
-            ioe.printStackTrace();
-            primaryKeyCounter = 0;  //todo is this the best thing to do, if the file can't be read?
-        } catch (NumberFormatException nfe) {
-            primaryKeyCounter = 0;  //todo is this the best thing to do, if the file's data can't be interpreted as an integer?
+        } catch (FileNotFoundException ioe) {
+            primaryKeyCounter = 0;  //First time program runs - set primaryKeyCounter to 0
+        } catch (Exception e) {
+            //File reading or processing error.
+            System.out.println("Error reading key file");
+            primaryKeyCounter = 0;     // todo - is the right approach? Should you quit the program if file is corrupted or not readable?
+            e.printStackTrace();
         }
-
     }
-
 
     private static void createTable() {
 
@@ -81,11 +81,10 @@ public class Cellphones {
                 Statement createTableStatement = connection.createStatement()) {
 
             //The SQL to create the cellphone table is
-            // CREATE TABLE cellphones (id INT NOT NULL, manufacturer VARCHAR(100), model VARCHAR(100) PRIMARY KEY(id) )
-            String createTableSQLtemplate = "CREATE TABLE %s (%s INT NOT NULL, %s VARCHAR(100), %s VARCHAR(100) PRIMARY KEY(%s) )";
+            // CREATE TABLE IN FOT EXISTS cellphones (id INT NOT NULL, manufacturer VARCHAR(100), model VARCHAR(100), PRIMARY KEY (id) )
+            String createTableSQLtemplate = "CREATE TABLE IF NOT EXISTS %s (%s INT NOT NULL, %s VARCHAR(100), %s VARCHAR(100), PRIMARY KEY (%s) )";
             String createTableSQL = String.format(createTableSQLtemplate, CELLPHONE_TABLE_NAME, ID_COL, MANUFACTURER_COL, MODEL_COL, ID_COL);
             System.out.println("The SQL to be executed is: " + createTableSQL);
-
 
             createTableStatement.execute(createTableSQL);
 

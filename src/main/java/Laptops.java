@@ -1,5 +1,3 @@
-import com.sun.tools.doclets.formats.html.SourceToHTMLConverter;
-
 import java.sql.*;
 import java.util.Scanner;
 
@@ -38,8 +36,8 @@ public class Laptops {
              Statement createTableStatement = connection.createStatement()) {
             
             //The SQL to create the Laptop table is
-            // CREATE TABLE Laptops (id INT NOT NULL AUTO_INCREMENT, manufacturer VARCHAR(100), model VARCHAR(100) PRIMARY KEY(id) )
-            String createTableSQLtemplate = "CREATE TABLE %s (%s INT NOT NULL AUTO_INCREMENT, %s VARCHAR(100), %s VARCHAR(100) PRIMARY KEY(%s) )";
+            // CREATE TABLE IF NOT EXISTS Laptops (id INT NOT NULL AUTO_INCREMENT, manufacturer VARCHAR(100), model VARCHAR(100) PRIMARY KEY (id) )
+            String createTableSQLtemplate = "CREATE TABLE IF NOT EXISTS %s (%s INT NOT NULL AUTO_INCREMENT, %s VARCHAR(100), %s VARCHAR(100), PRIMARY KEY (%s) )";
             String createTableSQL = String.format(createTableSQLtemplate, LAPTOP_TABLE_NAME, ID_COL, MANUFACTURER_COL, MODEL_COL, ID_COL);
             System.out.println("The SQL to be executed is: " + createTableSQL);
             
@@ -66,7 +64,8 @@ public class Laptops {
             //   INSERT INTO Laptops VALUES ( 'HP', 'Pavilion 510' )
             //   INSERT INTO Laptops VALUES ( 'Apple', 'iMac 2016' )
             
-            String insertSQL = String.format("INSERT INTO %s VALUES ( ? , ?) " , LAPTOP_TABLE_NAME);   // Don't need to provide a value for the primary key, the database will generate it for you
+            String insertSQL = String.format("INSERT INTO %s (%s, %s) VALUES ( ? , ? ) " , LAPTOP_TABLE_NAME, MANUFACTURER_COL, MODEL_COL);   // Don't need to provide a value for the primary key, the database will generate it for you
+            System.out.println("Insert data - the statement to execute is " + insertSQL);
             PreparedStatement insertTestDataStatement = connection.prepareStatement(insertSQL);
             
             //Add one row of test data
@@ -99,7 +98,7 @@ public class Laptops {
         
         try (Connection connection = DBUtils.getConnection()) {
             
-            String insertSQL = String.format("INSERT INTO %s VALUES ( ? , ?) " , LAPTOP_TABLE_NAME);     //Again, ID column value will be generated for us
+            String insertSQL = String.format("INSERT INTO %s (%s, %s) VALUES ( ? , ?) " , LAPTOP_TABLE_NAME, MANUFACTURER_COL, MODEL_COL);     //Again, ID column value will be generated for us
             PreparedStatement insertTestDataStatement = connection.prepareStatement(insertSQL);
             
             //Add one row of test data

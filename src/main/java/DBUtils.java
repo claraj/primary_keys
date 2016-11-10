@@ -15,7 +15,7 @@ public class DBUtils {
     static final String PASSWORD = "clara";      //TODO change to your own password
 
     //todo grant permissions to your user by running a command like this in your MySQL shell
-    //grant create, select, insert, drop on assets to 'username'@'localhost'
+    //grant create, select, insert on assets.* to 'username'@'localhost'
 
     static void registerDriver() {
 
