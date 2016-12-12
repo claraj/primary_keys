@@ -66,18 +66,18 @@ public class Laptops {
             
             String insertSQL = String.format("INSERT INTO %s (%s, %s) VALUES ( ? , ? ) " , LAPTOP_TABLE_NAME, MANUFACTURER_COL, MODEL_COL);   // Don't need to provide a value for the primary key, the database will generate it for you
             System.out.println("Insert data - the statement to execute is " + insertSQL);
+
             PreparedStatement insertTestDataStatement = connection.prepareStatement(insertSQL);
-            
+
             //Add one row of test data
             insertTestDataStatement.setString(1, "HP");
             insertTestDataStatement.setString(2, "Pavilion 510");
             insertTestDataStatement.execute();
-            
-            //Add another row of test data
+
             insertTestDataStatement.setString(1, "Apple");
             insertTestDataStatement.setString(2, "iMac 2016");
             insertTestDataStatement.execute();
-            
+
             insertTestDataStatement.close();
             connection.close();
             
@@ -90,7 +90,7 @@ public class Laptops {
     
     
     private static void insertNewLaptop() {
-        
+
         System.out.println("Enter manufacturer of new Laptop");
         String manuf = stringScanner.nextLine();
         System.out.println("Enter model of new Laptop");
@@ -98,16 +98,31 @@ public class Laptops {
         
         try (Connection connection = DBUtils.getConnection()) {
             
-            String insertSQL = String.format("INSERT INTO %s (%s, %s) VALUES ( ? , ?) " , LAPTOP_TABLE_NAME, MANUFACTURER_COL, MODEL_COL);     //Again, ID column value will be generated for us
-            PreparedStatement insertTestDataStatement = connection.prepareStatement(insertSQL);
+            String insertSQL = String.format("INSERT INTO %s (%s, %s) VALUES ( ? , ?) ", LAPTOP_TABLE_NAME, MANUFACTURER_COL, MODEL_COL);     //Again, ID column value will be generated for us
+
+            // If you'd like to fetch the auto-generated keys when rows are inserted, use this version.
+            // Note the second argument, Statement.RETURN_GENERATED_KEYS, which requests the keys are saved in the PreparedStatement.
+            PreparedStatement insertTestDataStatement = connection.prepareStatement(insertSQL, Statement.RETURN_GENERATED_KEYS);
             
-            //Add one row of test data
             insertTestDataStatement.setString(1, manuf);
             insertTestDataStatement.setString(2, model);
             insertTestDataStatement.execute();
-            
+
+            // Optional - what if you would like to know the key generated for the row that was just inserted?
+            // Make sure you create the PreparedStatement with the Statement.RETURN_GENERATED_KEYS option set
+            // And then calling the getGeneratedKeys() will return a ResultSet with the key(s) in. Only one row inserted, so just one in this example.
+            // Note that it's possible to insert many rows in one query; hence many keys generated, so the return type must be a ResultSet.
+
+            ResultSet pkResultSet = insertTestDataStatement.getGeneratedKeys();
+            if (pkResultSet.next()) {
+                int pk = pkResultSet.getInt(1);
+                System.out.println("The laptop was added to the database and will have key " + pk);
+            }
+
+
             System.out.println("Added new Laptop.");
-            
+
+            pkResultSet.close();
             insertTestDataStatement.close();
             connection.close();
             
